@@ -131,7 +131,7 @@ pip install -r requirements.txt
 ```bash
 # LLM API 配置
 API_KEY=your_api_key_here
-BASE_URL=https://open.bigmodel.cn/api/paas/v4/  # 智谱 AI
+BASE_URL=https://open.bigmodel.cn/api/paas/v4/  
 MODEL_NAME=glm-4-flash
 
 # 嵌入模型配置
@@ -333,23 +333,6 @@ autogen_mcp_config_path: str    # MCP 配置文件路径
 - 数据库查询
 - 自定义工具
 
-### 5. 报告装配与润色
-
-**AssemblerAgent** 负责最终报告生成：
-
-1. **章节合并**：按目录顺序拼接章节
-2. **引用去重**：保持出现顺序，去除重复引用
-3. **后处理**：
-   - 移除技术审校标记
-   - 清理 AI 机械衔接词（"首先、其次、总之"等）
-   - 减少过度加粗（每段保留 2-3 个）
-   - 清理重复空行
-4. **终稿润色**：
-   - 语言优化（消除机械风格）
-   - 逻辑连贯（章节承上启下）
-   - 排版美化（小标题、段落长度）
-   - 学术规范（引用、术语、数据）
-
 ---
 
 ## 使用示例
@@ -505,57 +488,7 @@ logger.success("成功日志")
 - 检查目录写入权限
 - 不要在运行时删除 `./cache/chroma/` 目录
 
-### 5. MCP 工具调用失败
 
-**问题**：工具未找到或执行错误。
-
-**解决方案**：
-- 确认 Node.js 已安装（`npx` 命令可用）
-- 检查 `autogenmcp.json` 配置正确
-- 查看日志中的工具调用详情
-- 测试 MCP 服务器独立运行：`npx -y @modelcontextprotocol/server-tavily`
-
----
-
-## 性能优化
-
-### 1. 缓存策略
-
-- **论文搜索缓存**：基于查询 MD5 缓存，避免重复检索
-- **向量数据库缓存**：仅在内容变化时写入
-- **嵌入模型缓存**：本地优先加载，避免重复下载
-
-### 2. 并发优化
-
-- 当前采用 **SingleThreadedAgentRuntime**，适合小规模任务
-- 可升级为 **MultiAgentRuntime** 实现并发处理
-
-### 3. 批量处理
-
-- **批量编码**：嵌入服务支持批量文本编码（默认 batch_size=32）
-- **批量入库**：ChromaDB 支持批量 upsert
-
----
-
-## 安全与合规
-
-### 敏感信息管理
-
-- API 密钥存储在 `.env` 文件（已加入 `.gitignore`）
-- 提供 `.env.example` 作为模板
-- 禁止在代码中硬编码密钥
-
-### 数据隐私
-
-- 论文数据仅用于学术研究
-- 本地缓存，无数据上传
-- 知识库可定期清理（删除 `./cache/chroma/`）
-
-### API 调用控制
-
-- 内置重试机制（最多 3 次，指数退避）
-- 支持自定义 `timeout` 和 `max_retries`
-- 建议设置 API 调用频率限制
 
 
 
